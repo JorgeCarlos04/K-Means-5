@@ -1,0 +1,10 @@
+# Estimación de Clústeres con Método del Codo
+
+# Método Implementado
+Explicación detallada del método del codo y su fundamentación matemática
+# Referencias
+1. [Método del codo - Analytics Lane](https://www.analyticslane.com/2023/06/09/metodo-del-codo-elbow-method-para-seleccionar-el-numero-optimo-de-clusteres-en-k-means/)
+2. [Comparación con método de silueta - LinkedIn](https://es.linkedin.com/pulse/kmeans-m%C3%A9todos-del-codo-y-de-la-silueta-knn-elecci%C3%B3n-kvecinos-tejeda)
+3. [Fundamentos de K-means - IBM](https://www.ibm.com/mx-es/think/topics/k-means-clustering)
+
+
