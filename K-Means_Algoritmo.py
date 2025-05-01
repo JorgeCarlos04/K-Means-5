@@ -5,37 +5,44 @@ from sklearn.datasets import load_iris
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score
 
-# Cargar y preprocesar datos
-data = load_iris()
-X = StandardScaler().fit_transform(data.data)  
+# 1. Carga y preparación de datos
+iris = load_iris()
+X = iris.data
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)  # Escalado para mejorar rendimiento de K-means[1]
 
-# Variables k a evaluar 
-valores = range(2, 11)
-inertias = []
-silhouette_scores = []
+# 2. Método del codo
+def analisis_codo(datos, max_clusters=10):
+    wcss = []
+    for k in range(1, max_clusters + 1):
+        kmeans = KMeans(n_clusters=k, random_state=42)
+        kmeans.fit(datos)
+        wcss.append(kmeans.inertia_)
+    
+    plt.figure(figsize=(10,4))
+    plt.subplot(1,2,1)
+    plt.plot(range(1, max_clusters+1), wcss, 'bx-')
+    plt.xlabel('Número de Clústeres (k)')
+    plt.ylabel('WCSS')
+    plt.title('Método del Codo')
 
-# Calcular los valores  para cada k
-for k in valores:
-    kmeans = KMeans(n_clusters=k, n_init='auto', random_state=42)
-    labels = kmeans.fit_predict(X)
-    inertias.append(kmeans.inertia_)
-    silhouette_scores.append(silhouette_score(X, labels))
+# 3. Análisis de silueta
+def analisis_silueta(datos, max_clusters=10):
+    silhouette_scores = []
+    for k in range(2, max_clusters+1):  # Silueta no aplica para k=1[2]
+        kmeans = KMeans(n_clusters=k, random_state=42)
+        labels = kmeans.fit_predict(datos)
+        score = silhouette_score(datos, labels)
+        silhouette_scores.append(score)
+    
+    plt.subplot(1,2,2)
+    plt.plot(range(2, max_clusters+1), silhouette_scores, 'ro-')
+    plt.xlabel('Número de Clústeres (k)')
+    plt.ylabel('Puntaje Silueta')
+    plt.title('Análisis de Silueta')
+    plt.tight_layout()
+    plt.show()
 
-# Grafico funcion (plt.)
-plt.figure(figsize=(12, 5))
-plt.subplot(1, 2, 1)
-plt.plot(k_values, inertias, marker='o', linestyle='--')
-plt.xlabel('Número de Clusters (k)')
-plt.ylabel('Inertia')
-plt.title('Método del Codo')
-plt.subplot(1, 2, 2)
-plt.plot(k_values, silhouette_scores, marker='o', linestyle='--')
-plt.xlabel('Número de Clusters (k)')
-plt.ylabel('Coeficiente de Silueta')
-plt.title('Análisis de Silueta')
-plt.tight_layout()
-plt.show()
-
-# K optimo o proximo
-optimal_k_silhouette = k_values[np.argmax(silhouette_scores)]
-print(f'k óptimo (silueta): {optimal_k_silhouette}')
+# Ejecución completa
+analisis_codo(X_scaled)
+analisis_silueta(X_scaled)
